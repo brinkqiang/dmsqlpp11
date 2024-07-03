@@ -28,8 +28,14 @@ cmake_minimum_required(VERSION 3.14)
 project(sqlpp11 VERSION 0.1 LANGUAGES CXX)
 
 ### Project Wide Setup
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+
+INCLUDE(cmake/ModuleImport.cmake)
+INCLUDE(cmake/ModuleCompileOptions.cmake)
+ModuleSetCompileOptions()
+
+ModuleImportAll("thirdparty")
 
 include(GNUInstallDirs)
 include(CTest)
@@ -37,7 +43,7 @@ include(CTest)
 option(BUILD_MYSQL_CONNECTOR "Build MySQL Connector" OFF)
 option(BUILD_MARIADB_CONNECTOR "Build MariaDB Connector" OFF)
 option(BUILD_POSTGRESQL_CONNECTOR "Build PostgreSQL Connector" OFF)
-option(BUILD_SQLITE3_CONNECTOR "Build SQLite3 Connector" OFF)
+option(BUILD_SQLITE3_CONNECTOR "Build SQLite3 Connector" ON)
 option(BUILD_SQLCIPHER_CONNECTOR "Build SQLite3 Connector with SQLCipher" OFF)
 
 option(DEPENDENCY_CHECK "Check for dependencies of connector and the library" ON)
@@ -62,9 +68,9 @@ if(DEPENDENCY_CHECK AND BUILD_POSTGRESQL_CONNECTOR)
     find_package(PostgreSQL REQUIRED)
 endif()
 
-if(DEPENDENCY_CHECK AND BUILD_SQLITE3_CONNECTOR)
-    find_package(SQLite3 REQUIRED)
-endif()
+#if(DEPENDENCY_CHECK AND BUILD_SQLITE3_CONNECTOR)
+#    find_package(SQLite3 REQUIRED)
+#endif()
 
 if(DEPENDENCY_CHECK AND BUILD_SQLCIPHER_CONNECTOR)
     find_package(SQLCipher REQUIRED)
@@ -90,7 +96,7 @@ target_compile_features(sqlpp11 INTERFACE cxx_std_11)
 
 
 if(BUILD_SQLITE3_CONNECTOR)
-    add_component(NAME sqlite3 DEPENDENCIES SQLite::SQLite3)
+    add_component(NAME sqlite3 DEPENDENCIES dmsqlitepp)
 endif()
 
 if(BUILD_SQLCIPHER_CONNECTOR)
@@ -128,7 +134,8 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Sqlpp11ConfigVersion.cmake
 install_component(NAME Sqlpp11 TARGETS sqlpp11 DIRECTORY)
 
 if(BUILD_SQLITE3_CONNECTOR)
-    install_component(NAME Sqlpp11SQLite3 TARGETS sqlpp11_sqlite3 DIRECTORY sqlite3)
+    
+    #install_component(NAME Sqlpp11SQLite3 TARGETS sqlpp11_sqlite3 DIRECTORY sqlite3)
 endif()
 
 if(BUILD_SQLCIPHER_CONNECTOR)
