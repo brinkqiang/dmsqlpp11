@@ -35,8 +35,8 @@ INCLUDE(cmake/ModuleImport.cmake)
 INCLUDE(cmake/ModuleCompileOptions.cmake)
 ModuleSetCompileOptions()
 
-ModuleImportAll("thirdparty")
-
+ModuleImport("dmsqlitepp" "thirdparty/dmsqlitepp")
+ModuleImport("date" "thirdparty/date")
 include(GNUInstallDirs)
 include(CTest)
 
@@ -80,7 +80,7 @@ if(DEPENDENCY_CHECK AND USE_SYSTEM_DATE)
     find_package(date REQUIRED)
 endif()
 
-add_subdirectory(dependencies)
+#add_subdirectory(dependencies)
 
 ### Core targets
 include(Sqlpp11TargetHelper)
